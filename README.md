@@ -66,3 +66,47 @@ Submission Instructions
 Ensure your application is fully functional and structured as described.
 Test all your endpoints thoroughly using an API client like Postman or Insomnia. Pay special attention to the advanced query endpoint, testing various combinations of filters, sorting, and pagination.
 Submit a link to your completed GitHub repository. Ensure your .env file and node_modules directory are not included.
+
+Test route examples
+
+Use the API at `http://localhost:3000/api/products` once the server is running.
+
+1. Create a product
+
+```bash
+curl -X POST http://localhost:3000/api/products \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Laptop","description":"High-performance laptop","price":1299.99,"category":"Electronics","inStock":true,"tags":["computer","office"]}'
+```
+
+2. Get all products
+
+```bash
+curl http://localhost:3000/api/products
+```
+
+3. Get a product by ID
+
+```bash
+curl http://localhost:3000/api/products/<PRODUCT_ID>
+```
+
+4. Update a product by ID
+
+```bash
+curl -X PUT http://localhost:3000/api/products/<PRODUCT_ID> \
+  -H "Content-Type: application/json" \
+  -d '{"price":1199.99,"inStock":false}'
+```
+
+5. Delete a product by ID
+
+```bash
+curl -X DELETE http://localhost:3000/api/products/<PRODUCT_ID>
+```
+
+6. Advanced querying
+
+```bash
+curl "http://localhost:3000/api/products?category=Electronics&minPrice=500&maxPrice=1500&sortBy=price_desc&page=1&limit=10"
+```
