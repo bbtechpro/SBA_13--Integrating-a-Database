@@ -69,4 +69,50 @@ router.delete('/products/:id', async (req, res) => {
   }
 });
 
+// GET /api/products (Read All Products with Advanced Querying)
+
+// This is the most complex endpoint. It should retrieve all products but also support the following optional query parameters:
+// category: Filter products by a specific category.
+// minPrice: Filter products with a price greater than or equal to this value.
+// maxPrice: Filter products with a price less than or equal to this value.
+// sortBy: Sort results. For example, price_asc for ascending price or price_desc for descending price.
+// page & limit: For pagination (defaulting to page 1, limit 10).
+// Dynamically build the Mongoose query based on which query parameters are provided.
+// Respond with an array of the resulting products.
+
+router.get('/products', async (req, res) => {
+  try {
+    const { category, minPrice, maxPrice, sortBy, page = 1, limit = 10 } = req.query;
+    const query = {};
+
+    if (category) {
+      query.category = category;
+    }
+
+    if (minPrice !== undefined) {
+      query.price = { ...query.price, $gte: parseFloat(minPrice) };
+    }
+
+    if (maxPrice !== undefined) {
+      query.price = { ...query.price, $lte: parseFloat(maxPrice) };
+    }
+
+    let sort = {};
+    if (sortBy === 'price_asc') {
+      sort.price = 1;
+    } else if (sortBy === 'price_desc') {
+      sort.price = -1;
+    }
+
+    const products = await Product.find(query)
+      .sort(sort)
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
